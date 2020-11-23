@@ -1,0 +1,75 @@
+#include <iostream>
+#include <math.h>
+#include <fstream>
+using namespace std;
+struct element_listy
+{
+    int wartosc;
+    int status; //0 - obecny 1 - skreślony
+    element_listy* next;
+};
+element_listy* dodaj_do_listy(int tmp_v,  int tmp_s, element_listy* tmp_t)
+{
+    element_listy* current = tmp_t;
+    current->next = new element_listy();
+    current->next->wartosc = tmp_v;
+    current->next->status = tmp_s;
+    tmp_t = current->next;
+    return tmp_t;
+}
+void sito(int tmp_z, int tmp_s, element_listy* tmp_h)
+{
+    element_listy* current = tmp_h;
+    for (int i = 0; i <=tmp_z; i++)
+    {
+        for (int j = 3; j <=tmp_s; j++)
+        {
+            if ((current->wartosc) % j == 0 && (current->wartosc) != j)
+            {
+                current->status = 1;
+            }
+        }
+        current = current->next;
+    }
+}
+int rozmiar_listy(element_listy* tmp_h)
+{
+    int rozmiar=0;
+    element_listy* current = tmp_h;
+    do
+    {
+        rozmiar++;
+        current = current->next;
+    } while ((current->next) != NULL);
+    return rozmiar;
+}
+int main()
+{
+    ofstream plik("pierwsze.txt");
+    int zakres;
+    cout << "Podaj zakres dzialania programu wiekszy od 2:";
+    cin >> zakres;
+    double pierwiastek = sqrt(zakres);
+    element_listy* head = new element_listy();
+    element_listy* tail = head;
+    tail->wartosc = 2;
+    tail->status = 0;
+    tail->next = NULL;
+    for (int i=3; i <= zakres; i+=2)
+    {
+        tail = dodaj_do_listy(i, 0, tail);
+    }
+    int rozmiar = rozmiar_listy(head);
+    sito(rozmiar, pierwiastek, head);
+    element_listy* current = head;
+    for (int i = 0; i <= rozmiar; i ++)
+    {
+        if (current->status == 0)
+        {
+            plik << current->wartosc << endl;
+        }
+        current = current->next;
+    }
+    plik.close();
+    return 0;
+}
